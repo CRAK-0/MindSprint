@@ -1,73 +1,92 @@
-import { createQuizSession, submitAnswer, nextQuestion } from "./quiz/quizSession";
-import { calculateScore } from "./quiz/scoring";
-import type { QuizConfig, QuizSession } from "./types/quiz";
-const App = () => {
-    const config: QuizConfig = {
-    tables: { selected: true, min: 1, max: 10 },
-    squares: { selected: true, min: 1, max: 10 },
-    cubes: { selected: true, min: 1, max: 10 },
-    squareRoots: { selected: true, min: 1, max: 10 },
-    cubeRoots: { selected: false, min: 1, max: 10 },
-};
-const testSession: QuizSession = {
-    totalQuestions: 4,
+import { useState } from "react";
+import { useQuiz } from "./hooks/useQuiz";
+import type { QuizConfig } from "./types/quiz";
 
-    answeredQuestions: [
-        {
-            question: "5 × 3",
-            correctAnswer: 15,
-            category: "tables",
-            userAnswer: 15,
-            timeTaken: 2000,
-            isCorrect: true,
-        },
-        {
-            question: "7²",
-            correctAnswer: 49,
-            category: "squares",
-            userAnswer: 45,
-            timeTaken: 3000,
-            isCorrect: false,
-        },
-        {
-            question: "4³",
-            correctAnswer: 64,
-            category: "cubes",
-            userAnswer: 64,
-            timeTaken: 1500,
-            isCorrect: true,
-        },
-        {
-            question: "√81",
-            correctAnswer: 9,
-            category: "squareRoots",
-            userAnswer: 9,
-            timeTaken: 4000,
-            isCorrect: true,
-        },
-    ],
-
-    currentQuestion: {
-        question: "√81",
-        correctAnswer: 9,
-        category: "squareRoots",
+const quizConfig: QuizConfig = {
+    tables: {
+        selected: true,
+        min: 1,
+        max: 10,
     },
-
-    totalTime: 12000,
-
-    quizConfig: config,
-
-    quizStartTime: 1000,
-    questionStartTime: 9000,
+    squares: {
+        selected: true,
+        min: 1,
+        max: 20,
+    },
+    cubes: {
+        selected: false,
+        min: 1,
+        max: 10,
+    },
+    squareRoots: {
+        selected: false,
+        min: 1,
+        max: 20,
+    },
+    cubeRoots: {
+        selected: false,
+        min: 1,
+        max: 10,
+    },
 };
 
-const result = calculateScore(testSession);
+function App() {
+    const {
+        session,
+        isSubmitted,
+        startQuiz,
+        submit,
+        next,
+    } = useQuiz();
 
-console.log("Score:", result);
-  return (
-    <div>
-    </div>
-  )
+    const [answer, setAnswer] = useState("");
+
+    const handleSubmit = () => {
+        submit(Number(answer));
+    };
+
+    return (
+        <div>
+            <h1>MindSprint Test</h1>
+
+            {!session && (
+                <button onClick={() => startQuiz(quizConfig, 5)}>
+                    Start Quiz
+                </button>
+            )}
+
+            {session && (
+                <div>
+                    <h2>{session.currentQuestion.question}</h2>
+
+                    <p>
+                        Answered: {session.answeredQuestions.length} /{" "}
+                        {session.totalQuestions}
+                    </p>
+
+                    {!isSubmitted && (
+                        <div>
+                            <input
+                                type="number"
+                                value={answer}
+                                onChange={(e) => setAnswer(e.target.value)}
+                            />
+
+                            <button onClick={handleSubmit}>
+                                Submit
+                            </button>
+                        </div>
+                    )}
+
+                    {isSubmitted && (
+                        <button onClick={next}>
+                            Next Question
+                        </button>
+                    )}
+                </div>
+            )}
+        </div>
+    );
 }
 
-export default App
+export default App;

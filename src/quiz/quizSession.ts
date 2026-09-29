@@ -1,8 +1,10 @@
 import type { QuizSession, QuizConfig, AnsweredQuestion } from "../types/quiz";
 import { getElapsedTime, startTimer } from "../utils/timer";
 import { quizEngine } from "./quizEngine";
+import { validateQuizConfig } from "./validation";
 
 export const createQuizSession = (quizConfig: QuizConfig, totalQuestions: number):QuizSession => {
+    validateQuizConfig(quizConfig,totalQuestions);
     const question  = quizEngine(quizConfig);
     const answeredQuestions:AnsweredQuestion[] = [];
     const currentQuestion = question;
@@ -21,28 +23,38 @@ export const createQuizSession = (quizConfig: QuizConfig, totalQuestions: number
 };
 }
 
-export const submitAnswer = (session:QuizSession,userAnswer:number):QuizSession => {
-    let isCorrect:boolean = false;
-    if(session.currentQuestion.correctAnswer === userAnswer){
-        isCorrect = true
-    }
+export const submitAnswer = (
+    session: QuizSession,
+    userAnswer: number
+): QuizSession => {
+    const isCorrect =
+        session.currentQuestion.correctAnswer === userAnswer;
+
     const timeTaken = getElapsedTime(session.questionStartTime);
-    const answeredQuestion:AnsweredQuestion = {
+
+    const answeredQuestion: AnsweredQuestion = {
         question: session.currentQuestion.question,
         correctAnswer: session.currentQuestion.correctAnswer,
         category: session.currentQuestion.category,
         userAnswer,
-        timeTaken:timeTaken,
+        timeTaken,
         isCorrect,
-    }
-    session.answeredQuestions.push(answeredQuestion);
+    };
 
-    if(session.answeredQuestions.length === session.totalQuestions){
-        session.totalTime = Date.now() - session.quizStartTime;
+    const updatedSession: QuizSession = {
+        ...session,
+        answeredQuestions: [
+            ...session.answeredQuestions,
+            answeredQuestion,
+        ],
+    };
+
+    if (updatedSession.answeredQuestions.length === updatedSession.totalQuestions) {
+        return finishQuiz(updatedSession);
     }
-    return session;
-    
-}
+
+    return updatedSession;
+};
 
 export const nextQuestion =(session: QuizSession): QuizSession|null => {
 
@@ -52,8 +64,18 @@ export const nextQuestion =(session: QuizSession): QuizSession|null => {
 
     const next = quizEngine(session.quizConfig);
 
-    session.currentQuestion = next;
-    session.questionStartTime = startTimer();    
+    const updatedSession:QuizSession = {
+        ...session,
+        currentQuestion : next,
+        questionStartTime : startTimer(),
+    }
 
-    return session;
+
+    return updatedSession;
 }
+
+export const finishQuiz = (session: QuizSession): QuizSession => {
+    const totalTime = Date.now() - session.quizStartTime;
+    session.totalTime = totalTime;
+    return session;
+};
