@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuiz } from "./hooks/useQuiz";
-import type { QuizConfig } from "./types/quiz";
+import type { QuizConfig, QuizHistory } from "./types/quiz";
 
 const quizConfig: QuizConfig = {
     tables: {
@@ -34,12 +34,47 @@ function App() {
     const {
         session,
         isSubmitted,
+        isFinished,
+        result,
         startQuiz,
         submit,
         next,
     } = useQuiz();
 
     const [answer, setAnswer] = useState("");
+
+    useEffect(() => {
+    if (result === null) {
+        return;
+    }
+
+    // your existing history-saving logic
+    
+    const stored = localStorage.getItem("quiz");
+    
+    if (result === null) {
+        return;
+    }
+    
+    const newRecord: QuizHistory = {
+        ...result,
+        id: Date.now(),
+        timestamp: Date.now(),
+    };
+    
+    let history: QuizHistory[];
+    
+    if (stored === null) {
+        history = [newRecord];
+    } else {
+        history = JSON.parse(stored) as QuizHistory[];
+    }
+    
+    const updatedHistory = [...history, newRecord];
+    
+    localStorage.setItem("quiz", JSON.stringify(updatedHistory));
+    
+}, [result]);    
 
     const handleSubmit = () => {
         submit(Number(answer));
@@ -50,7 +85,7 @@ function App() {
             <h1>MindSprint Test</h1>
 
             {!session && (
-                <button onClick={() => startQuiz(quizConfig, 5)}>
+                <button onClick={() => startQuiz(quizConfig, 3)}>
                     Start Quiz
                 </button>
             )}
@@ -85,6 +120,22 @@ function App() {
                     )}
                 </div>
             )}
+            {isFinished && result && (
+    <div>
+        <h2>Quiz Finished</h2>
+
+        <p>Correct: {result.correctAnswers}</p>
+        <p>Wrong: {result.wrongAnswers}</p>
+        <p>Accuracy: {result.accuracy}%</p>
+        <p>Average Time: {result.averageTime} ms</p>
+        <p>Fastest: {result.fastestAnswer} ms</p>
+        <p>Slowest: {result.slowestAnswer} ms</p>
+        <p>Total Time: {result.totalTime} ms</p>
+        <button onClick={() => startQuiz(quizConfig,3)}>
+            Restart Quiz
+        </button>
+    </div>
+)}
         </div>
     );
 }

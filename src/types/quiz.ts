@@ -42,3 +42,8 @@ export type QuizResult = {
     slowestAnswer:number,
     totalTime:number
 };
+
+export type QuizHistory = QuizResult & {
+    id:number,
+    timestamp: number
+}
