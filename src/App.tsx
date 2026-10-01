@@ -1,34 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import type { QuizConfig } from "./types/quiz";
 import { useQuiz } from "./hooks/useQuiz";
-import type { QuizConfig, QuizHistory } from "./types/quiz";
-
-const quizConfig: QuizConfig = {
-    tables: {
-        selected: true,
-        min: 1,
-        max: 10,
-    },
-    squares: {
-        selected: true,
-        min: 1,
-        max: 20,
-    },
-    cubes: {
-        selected: false,
-        min: 1,
-        max: 10,
-    },
-    squareRoots: {
-        selected: false,
-        min: 1,
-        max: 20,
-    },
-    cubeRoots: {
-        selected: false,
-        min: 1,
-        max: 10,
-    },
-};
+import { History } from "./pages/History";
 
 function App() {
     const {
@@ -43,99 +16,177 @@ function App() {
 
     const [answer, setAnswer] = useState("");
 
-    useEffect(() => {
-    if (result === null) {
-        return;
-    }
+    const [quizConfig] = useState<QuizConfig>({
+        tables: {
+            selected: true,
+            min: 1,
+            max: 10,
+        },
+        squares: {
+            selected: false,
+            min: 1,
+            max: 100,
+        },
+        cubes: {
+            selected: false,
+            min: 1,
+            max: 20,
+        },
+        squareRoots: {
+            selected: false,
+            min: 1,
+            max: 100,
+        },
+        cubeRoots: {
+            selected: false,
+            min: 1,
+            max: 20,
+        },
+    });
 
-    // your existing history-saving logic
-    
-    const stored = localStorage.getItem("quiz");
-    
-    if (result === null) {
-        return;
-    }
-    
-    const newRecord: QuizHistory = {
-        ...result,
-        id: Date.now(),
-        timestamp: Date.now(),
+    const handleStart = () => {
+        startQuiz(quizConfig, 3);
     };
-    
-    let history: QuizHistory[];
-    
-    if (stored === null) {
-        history = [newRecord];
-    } else {
-        history = JSON.parse(stored) as QuizHistory[];
-    }
-    
-    const updatedHistory = [...history, newRecord];
-    
-    localStorage.setItem("quiz", JSON.stringify(updatedHistory));
-    
-}, [result]);    
 
     const handleSubmit = () => {
+        if (answer.trim() === "") return;
+
         submit(Number(answer));
+        setAnswer("");
     };
 
-    return (
-        <div>
-            <h1>MindSprint Test</h1>
+    const handleNext = () => {
+        next();
+        setAnswer("");
+    };
 
-            {!session && (
-                <button onClick={() => startQuiz(quizConfig, 3)}>
+    if (isFinished && result) {
+        return (
+            <div className="min-h-screen bg-zinc-950 px-6 py-10 text-zinc-100">
+                <div className="mx-auto max-w-xl">
+                    <h1 className="mb-8 text-3xl font-bold">
+                        Quiz Complete
+                    </h1>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="rounded-xl bg-zinc-900 p-5">
+                            <p className="text-zinc-400">Accuracy</p>
+                            <p className="text-2xl font-semibold">
+                                {result.accuracy}%
+                            </p>
+                        </div>
+
+                        <div className="rounded-xl bg-zinc-900 p-5">
+                            <p className="text-zinc-400">Correct</p>
+                            <p className="text-2xl font-semibold">
+                                {result.correctAnswers}
+                            </p>
+                        </div>
+
+                        <div className="rounded-xl bg-zinc-900 p-5">
+                            <p className="text-zinc-400">Wrong</p>
+                            <p className="text-2xl font-semibold">
+                                {result.wrongAnswers}
+                            </p>
+                        </div>
+
+                        <div className="rounded-xl bg-zinc-900 p-5">
+                            <p className="text-zinc-400">Average Time</p>
+                            <p className="text-2xl font-semibold">
+                                {result.averageTime}ms
+                            </p>
+                        </div>
+
+                        <div className="rounded-xl bg-zinc-900 p-5">
+                            <p className="text-zinc-400">Fastest</p>
+                            <p className="text-2xl font-semibold">
+                                {result.fastestAnswer}ms
+                            </p>
+                        </div>
+
+                        <div className="rounded-xl bg-zinc-900 p-5">
+                            <p className="text-zinc-400">Total Time</p>
+                            <p className="text-2xl font-semibold">
+                                {result.totalTime}ms
+                            </p>
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={handleStart}
+                        className="mt-8 w-full rounded-xl bg-white px-5 py-3 font-semibold text-black"
+                    >
+                        Start Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (session === null) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-zinc-950 text-zinc-100">
+                <button
+                    onClick={handleStart}
+                    className="rounded-xl bg-white px-6 py-3 font-semibold text-black"
+                >
                     Start Quiz
                 </button>
-            )}
+            </div>
+        );
+    }
 
-            {session && (
-                <div>
-                    <h2>{session.currentQuestion.question}</h2>
-
-                    <p>
-                        Answered: {session.answeredQuestions.length} /{" "}
+    return (
+        <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-6 text-zinc-100">
+            <div className="w-full max-w-xl">
+                <div className="mb-8">
+                    <p className="text-sm text-zinc-400">
+                        Question{" "}
+                        {session.answeredQuestions.length + 1} /{" "}
                         {session.totalQuestions}
                     </p>
 
-                    {!isSubmitted && (
-                        <div>
-                            <input
-                                type="number"
-                                value={answer}
-                                onChange={(e) => setAnswer(e.target.value)}
-                            />
+                    <h1 className="mt-4 text-center text-5xl font-bold">
+                        {session.currentQuestion.question}
+                    </h1>
+                </div>
 
-                            <button onClick={handleSubmit}>
-                                Submit
-                            </button>
-                        </div>
-                    )}
+                <div className="flex flex-col gap-4">
+                    <input
+                        type="number"
+                        value={answer}
+                        onChange={(event) => setAnswer(event.target.value)}
+                        onKeyDown={(event) => {
+                            if (event.key === "Enter" && !isSubmitted) {
+                                handleSubmit();
+                            }
+                        }}
+                        disabled={isSubmitted}
+                        autoFocus
+                        className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4 text-center text-2xl outline-none"
+                    />
 
-                    {isSubmitted && (
-                        <button onClick={next}>
-                            Next Question
+                    {!isSubmitted ? (
+                        <button
+                            onClick={handleSubmit}
+                            className="rounded-xl bg-white px-5 py-3 font-semibold text-black"
+                        >
+                            Submit
+                        </button>
+                    ) : (
+                        <button
+                            onClick={handleNext}
+                            className="rounded-xl bg-white px-5 py-3 font-semibold text-black"
+                        >
+                            {session.answeredQuestions.length ===
+                            session.totalQuestions
+                                ? "View Result"
+                                : "Next"}
                         </button>
                     )}
                 </div>
-            )}
-            {isFinished && result && (
-    <div>
-        <h2>Quiz Finished</h2>
-
-        <p>Correct: {result.correctAnswers}</p>
-        <p>Wrong: {result.wrongAnswers}</p>
-        <p>Accuracy: {result.accuracy}%</p>
-        <p>Average Time: {result.averageTime} ms</p>
-        <p>Fastest: {result.fastestAnswer} ms</p>
-        <p>Slowest: {result.slowestAnswer} ms</p>
-        <p>Total Time: {result.totalTime} ms</p>
-        <button onClick={() => startQuiz(quizConfig,3)}>
-            Restart Quiz
-        </button>
-    </div>
-)}
+            </div>
+            <History/>
         </div>
     );
 }

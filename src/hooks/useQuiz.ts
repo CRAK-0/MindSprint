@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { QuizConfig, QuizResult, QuizSession } from "../types/quiz";
 import { createQuizSession, nextQuestion, submitAnswer } from "../quiz/quizSession";
 import { calculateScore } from "../quiz/scoring";
+import { saveQuizHistory } from "../utils/history";
 
 export const useQuiz = () => {
     const [session, setSession] = useState<QuizSession | null>(null);
@@ -36,14 +37,13 @@ export const useQuiz = () => {
     if (submittedSession.answeredQuestions.length === submittedSession.totalQuestions) {
         const quizResult = calculateScore(submittedSession);
         setResult(quizResult);
+        saveQuizHistory(quizResult);
         setIsFinished(true);
         }
 
     setSession(submittedSession);
     setIsSubmitted(true);
     };
-
-    
 
     const next = () => {
     const currentSession = session;
@@ -60,7 +60,8 @@ export const useQuiz = () => {
 
     setSession(nextSession);
     setIsSubmitted(false);
-};
+    };
+
 return {
         session,
         isSubmitted,
