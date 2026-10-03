@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import type { QuizConfig } from "../types/quiz";
 import { useQuiz } from "../hooks/useQuiz";
 import { useLocation, useNavigate } from "react-router-dom";
 
 type StateConfig = {
-    config:QuizConfig,
-    totalQuestions: number,
-}
+    config: QuizConfig;
+    totalQuestions: number;
+};
 
 export const Quiz = () => {
     const {
@@ -21,32 +21,28 @@ export const Quiz = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    
-    const state = location.state as StateConfig|null;
 
-    const [answer, setAnswer] = useState("");
+    const state = location.state as StateConfig | null;
 
     useEffect(() => {
-        if(state){
-            startQuiz(state.config,state.totalQuestions)
+        if (state) {
+            startQuiz(state.config, state.totalQuestions);
         }
-    },[])
+    }, []);
 
-    const handleSubmit = () => {
-        if (answer.trim() === "") return;
-
-        submit(Number(answer));
-        setAnswer("");
+    const handleOptionClick = (option: number) => {
+        submit(option);
     };
 
     const handleNext = () => {
         next();
-        setAnswer("");
     };
+
     const handleRestart = () => {
-        if(state){
-        startQuiz(state.config,state.totalQuestions)}
-    }
+        if (state) {
+            startQuiz(state.config, state.totalQuestions);
+        }
+    };
 
     const handleQuizDetails = () => {
         navigate("/quiz-details", {
@@ -58,7 +54,7 @@ export const Quiz = () => {
 
     const handleQuizSetup = () => {
         navigate("/quizSetup");
-    }
+    };
 
     if (isFinished && result) {
         return (
@@ -93,7 +89,7 @@ export const Quiz = () => {
                         <div className="rounded-xl bg-zinc-900 p-5">
                             <p className="text-zinc-400">Average Time</p>
                             <p className="text-2xl font-semibold">
-                                {(result.averageTime)/1000}sec
+                                {result.averageTime / 1000}sec
                             </p>
                         </div>
 
@@ -133,12 +129,11 @@ export const Quiz = () => {
     if (session === null) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-zinc-950 text-zinc-100">
-                
                 <button
                     onClick={handleQuizSetup}
                     className="rounded-xl bg-white px-6 py-3 font-semibold text-black"
                 >
-                    Setup Quiz 
+                    Setup Quiz
                 </button>
             </div>
         );
@@ -158,40 +153,29 @@ export const Quiz = () => {
                     </h1>
                 </div>
 
-                <div className="flex flex-col gap-4">
-                    <input
-                        type="number"
-                        value={answer}
-                        onChange={(event) => setAnswer(event.target.value)}
-                        onKeyDown={(event) => {
-                            if (event.key === "Enter" && !isSubmitted) {
-                                handleSubmit();
-                            }
-                        }}
-                        disabled={isSubmitted}
-                        autoFocus
-                        className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4 text-center text-2xl outline-none"
-                    />
-
-                    {!isSubmitted ? (
-                        <button
-                            onClick={handleSubmit}
-                            className="rounded-xl bg-white px-5 py-3 font-semibold text-black"
-                        >
-                            Submit
-                        </button>
-                    ) : (
-                        <button
-                            onClick={handleNext}
-                            className="rounded-xl bg-white px-5 py-3 font-semibold text-black"
-                        >
-                            {session.answeredQuestions.length ===
-                            session.totalQuestions
-                                ? "View Result"
-                                : "Next"}
-                        </button>
-                    )}
-                </div>
+                {!isSubmitted ? (
+                    <div className="grid grid-cols-2 gap-4">
+                        {session.currentQuestion.options.map((option) => (
+                            <button
+                                key={option}
+                                onClick={() => handleOptionClick(option)}
+                                className="rounded-xl bg-zinc-900 px-5 py-4 text-xl font-semibold transition hover:bg-zinc-800"
+                            >
+                                {option}
+                            </button>
+                        ))}
+                    </div>
+                ) : (
+                    <button
+                        onClick={handleNext}
+                        className="w-full rounded-xl bg-white px-5 py-3 font-semibold text-black"
+                    >
+                        {session.answeredQuestions.length ===
+                        session.totalQuestions
+                            ? "View Result"
+                            : "Next"}
+                    </button>
+                )}
             </div>
         </div>
     );

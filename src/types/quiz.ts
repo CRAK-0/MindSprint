@@ -3,6 +3,7 @@ export type QuizCategory = "tables" | "squares" | "cubes" | "squareRoots" | "cub
 export type Question = {
     question : string,
     correctAnswer : number,
+    options: number[],
     category : QuizCategory,
 };
 

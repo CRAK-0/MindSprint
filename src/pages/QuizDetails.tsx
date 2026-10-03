@@ -6,8 +6,7 @@ export const QuizDetails = () => {
     
 
     const answeredQuestions = location.state?.answeredQuestions;
-    console.log("answeredQuestions",answeredQuestions);    
-
+    
     const navigate = useNavigate();
 
     const BackToHome = () => {

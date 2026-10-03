@@ -183,9 +183,7 @@ export const QuizSetup = () => {
 
     const categorySelectionError = errors.find(
         (error) => error.category === "categories"
-    );
-
-    
+    );  
 
     const handleSubmit = () => {
         const validationErrors = validateQuizConfig(config, totalQuestions);
