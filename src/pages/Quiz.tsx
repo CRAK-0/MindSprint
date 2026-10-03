@@ -16,7 +16,7 @@ export const Quiz = () => {
         result,
         startQuiz,
         submit,
-        next,
+        selectedAnswer,
     } = useQuiz();
 
     const navigate = useNavigate();
@@ -32,10 +32,6 @@ export const Quiz = () => {
 
     const handleOptionClick = (option: number) => {
         submit(option);
-    };
-
-    const handleNext = () => {
-        next();
     };
 
     const handleRestart = () => {
@@ -153,29 +149,43 @@ export const Quiz = () => {
                     </h1>
                 </div>
 
-                {!isSubmitted ? (
-                    <div className="grid grid-cols-2 gap-4">
-                        {session.currentQuestion.options.map((option) => (
+                <div className="grid grid-cols-2 gap-4">
+                    {session.currentQuestion.options.map((option) => {
+                        const isCorrect =
+                            option === session.currentQuestion.correctAnswer;
+
+                        const isSelected =
+                            option === selectedAnswer;
+
+                        const showCorrect =
+                            isSubmitted && isCorrect;
+
+                        const showWrong =
+                            isSubmitted &&
+                            isSelected &&
+                            !isCorrect;
+
+                        return (
                             <button
                                 key={option}
                                 onClick={() => handleOptionClick(option)}
-                                className="rounded-xl bg-zinc-900 px-5 py-4 text-xl font-semibold transition hover:bg-zinc-800"
+                                disabled={isSubmitted}
+                                className={`
+                                    rounded-xl px-5 py-4 text-xl font-semibold transition
+                                    ${
+                                        showCorrect
+                                            ? "bg-green-600"
+                                            : showWrong
+                                            ? "bg-red-600"
+                                            : "bg-zinc-900"
+                                    }
+                                `}
                             >
                                 {option}
                             </button>
-                        ))}
-                    </div>
-                ) : (
-                    <button
-                        onClick={handleNext}
-                        className="w-full rounded-xl bg-white px-5 py-3 font-semibold text-black"
-                    >
-                        {session.answeredQuestions.length ===
-                        session.totalQuestions
-                            ? "View Result"
-                            : "Next"}
-                    </button>
-                )}
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );
