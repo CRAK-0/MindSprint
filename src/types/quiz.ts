@@ -30,7 +30,8 @@ export type QuizSession = {
     totalTime: number,
     quizConfig: QuizConfig,
     questionStartTime: number,
-    quizStartTime:number
+    quizStartTime:number,
+    currentQuestionNumber:number,
 }
 
 export type QuizResult = {

@@ -19,7 +19,8 @@ export const createQuizSession = (quizConfig: QuizConfig, totalQuestions: number
     totalTime,
     quizConfig,
     questionStartTime:questionStartTime,
-    quizStartTime:quizStartTime
+    quizStartTime:quizStartTime,
+    currentQuestionNumber:1,
 };
 }
 

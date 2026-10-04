@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { QuizConfig } from "../types/quiz";
 import { useQuiz } from "../hooks/useQuiz";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -23,6 +23,20 @@ export const Quiz = () => {
     const location = useLocation();
 
     const state = location.state as StateConfig | null;
+    const [elapsedTime, setElapsedTime] = useState(0);
+
+    useEffect(() => {
+    if (!session || isSubmitted) return;
+
+    const interval = setInterval(() => {
+        const elapsed = Date.now() - session.questionStartTime;
+        setElapsedTime(elapsed);
+    }, 100);
+
+    return () => {
+        clearInterval(interval);
+    };
+}, [session?.currentQuestion, isSubmitted]);
 
     useEffect(() => {
         if (state) {
@@ -85,21 +99,21 @@ export const Quiz = () => {
                         <div className="rounded-xl bg-zinc-900 p-5">
                             <p className="text-zinc-400">Average Time</p>
                             <p className="text-2xl font-semibold">
-                                {result.averageTime / 1000}sec
+                                {(result.averageTime / 1000).toFixed(2)}sec
                             </p>
                         </div>
 
                         <div className="rounded-xl bg-zinc-900 p-5">
                             <p className="text-zinc-400">Fastest</p>
                             <p className="text-2xl font-semibold">
-                                {result.fastestAnswer}ms
+                                {(result.fastestAnswer / 1000).toFixed(2)}sec
                             </p>
                         </div>
 
                         <div className="rounded-xl bg-zinc-900 p-5">
                             <p className="text-zinc-400">Total Time</p>
                             <p className="text-2xl font-semibold">
-                                {result.totalTime}ms
+                                {(result.totalTime/1000).toFixed(2)}sec
                             </p>
                         </div>
                     </div>
@@ -138,10 +152,12 @@ export const Quiz = () => {
     return (
         <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-6 text-zinc-100">
             <div className="w-full max-w-xl">
+            <p className="text-center text-sm text-zinc-400">
+                {(elapsedTime / 1000).toFixed(1)}s
+            </p>
                 <div className="mb-8">
                     <p className="text-sm text-zinc-400">
-                        Question {session.answeredQuestions.length + 1} /{" "}
-                        {session.totalQuestions}
+                       Question {session.currentQuestionNumber} / {session.totalQuestions}
                     </p>
 
                     <h1 className="mt-4 text-center text-5xl font-bold">
