@@ -1,51 +1,58 @@
 import type { QuizResult, QuizSession } from "../types/quiz";
 
 export const calculateScore = (session: QuizSession): QuizResult => {
-    const correctAnswers = session.answeredQuestions
-    .filter((question) => {
-        return question.isCorrect === true;
-    }).length;
-    const wrongAnswers = session.totalQuestions - correctAnswers;
-    const accuracy = Number(((correctAnswers/session.totalQuestions) * 100).toFixed(2));
-    const firstQuestionTime = session.answeredQuestions[0].timeTaken;
-    const totalAnswerTime = session.answeredQuestions
-    .reduce((total, question) => {
-        // your calculation
-        total += question.timeTaken;
-        return total;
-    }, 0);
-    const averageTime = totalAnswerTime/session.totalQuestions;
+  const correctAnswers = session.answeredQuestions.filter((question) => {
+    return question.isCorrect === true;
+  }).length;
+  // Total questions actually answered
+  const answeredCount = session.answeredQuestions.length;
 
-    const fastestAnswer = session.answeredQuestions.reduce(
+  // Calculate wrong answers from questions actually answered
+  const wrongAnswers = answeredCount - correctAnswers;
+  const accuracy = Number(
+    ((correctAnswers / session.totalQuestions) * 100).toFixed(2),
+  );
+  const firstQuestionTime = session.answeredQuestions[0].timeTaken;
+  const totalAnswerTime = session.answeredQuestions.reduce(
+    (total, question) => {
+      // your calculation
+      total += question.timeTaken;
+      return total;
+    },
+    0,
+  );
+  const averageTime = totalAnswerTime / session.totalQuestions;
+
+  const fastestAnswer = session.answeredQuestions.reduce(
     (fastest, question) => {
-        // compare fastest with question.timeTaken
-        if (question.timeTaken < fastest) {
-            return question.timeTaken;
-        }
+      // compare fastest with question.timeTaken
+      if (question.timeTaken < fastest) {
+        return question.timeTaken;
+      }
 
-    return fastest;
+      return fastest;
     },
-    firstQuestionTime
-);
-    const slowestAnswer = session.answeredQuestions.reduce(
+    firstQuestionTime,
+  );
+  const slowestAnswer = session.answeredQuestions.reduce(
     (slowest, question) => {
-        // compare fastest with question.timeTaken
-        if (question.timeTaken > slowest) {
-            return question.timeTaken;
-        }
+      // compare fastest with question.timeTaken
+      if (question.timeTaken > slowest) {
+        return question.timeTaken;
+      }
 
-    return slowest;
+      return slowest;
     },
-    firstQuestionTime
-);
+    firstQuestionTime,
+  );
 
-    return{
-        correctAnswers:correctAnswers,
-        wrongAnswers:wrongAnswers,
-        accuracy:accuracy,
-        averageTime:averageTime,
-        fastestAnswer:fastestAnswer,
-        slowestAnswer:slowestAnswer,
-        totalTime:session.totalTime,
-    }
+  return {
+    correctAnswers: correctAnswers,
+    wrongAnswers: wrongAnswers,
+    accuracy: accuracy,
+    averageTime: averageTime,
+    fastestAnswer: fastestAnswer,
+    slowestAnswer: slowestAnswer,
+    totalTime: session.totalTime,
+  };
 };
