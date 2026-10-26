@@ -3,6 +3,9 @@ export type QuizCategory =
   | "squares"
   | "cubes"
   | "squareRoots"
+  | "addition"
+  | "subtraction"
+  | "multiplication"
   | "cubeRoots";
 
 export type Question = {
