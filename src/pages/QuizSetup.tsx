@@ -456,19 +456,16 @@ export const QuizSetup = () => {
     </div>
   );
 };
-import { fractionQuestion } from "../generators/fractionQuestion";
 
-console.log(fractionQuestion("master"));
-console.log(fractionQuestion("master"));
-console.log(fractionQuestion("master"));
-console.log(fractionQuestion("master"));
-console.log(fractionQuestion("master"));
-console.log(fractionQuestion("master"));
-console.log(fractionQuestion("master"));
-console.log(fractionQuestion("master"));
-console.log(fractionQuestion("master"));
-console.log(fractionQuestion("master"));
-console.log(fractionQuestion("master"));
-console.log(fractionQuestion("master"));
-console.log(fractionQuestion("master"));
-console.log(fractionQuestion("master"));
+import { ratioQuestion } from "../generators/rationQuestion";
+
+console.log(ratioQuestion());
+console.log(ratioQuestion());
+console.log(ratioQuestion());
+console.log(ratioQuestion());
+console.log(ratioQuestion());
+console.log(ratioQuestion());
+console.log(ratioQuestion());
+console.log(ratioQuestion());
+console.log(ratioQuestion());
+console.log(ratioQuestion());

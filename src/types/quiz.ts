@@ -8,13 +8,15 @@ export type QuizCategory =
   | "multiplication"
   | "cubeRoots"
   | "percentage"
-  | "fraction";
+  | "fraction"
+  | "ratio"
+  | "simplification";
 
 export type Question = {
   question: string;
-  correctAnswer: number;
-  options: number[];
-  category: QuizCategory;
+  correctAnswer: number | string;
+  options: (number | string)[];
+  category: string;
   difficulty?: "beginner" | "intermediate" | "master";
 };
 

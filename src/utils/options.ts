@@ -1,8 +1,8 @@
 import { randomInteger } from "./random";
 
 export const createOptions = (
-  correctAnswer: number,
-  candidates: number[],
+  correctAnswer: number | string,
+  candidates: number[] | string[],
 ): number[] => {
   const uniqueCandidates = new Set<number>();
 
