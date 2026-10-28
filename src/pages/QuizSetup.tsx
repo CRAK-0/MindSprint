@@ -456,16 +456,3 @@ export const QuizSetup = () => {
     </div>
   );
 };
-
-import { ratioQuestion } from "../generators/rationQuestion";
-
-console.log(ratioQuestion());
-console.log(ratioQuestion());
-console.log(ratioQuestion());
-console.log(ratioQuestion());
-console.log(ratioQuestion());
-console.log(ratioQuestion());
-console.log(ratioQuestion());
-console.log(ratioQuestion());
-console.log(ratioQuestion());
-console.log(ratioQuestion());
