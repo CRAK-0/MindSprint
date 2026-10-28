@@ -6,13 +6,16 @@ export type QuizCategory =
   | "addition"
   | "subtraction"
   | "multiplication"
-  | "cubeRoots";
+  | "cubeRoots"
+  | "percentage"
+  | "fraction";
 
 export type Question = {
   question: string;
   correctAnswer: number;
   options: number[];
   category: QuizCategory;
+  difficulty?: "beginner" | "intermediate" | "master";
 };
 
 export type AnsweredQuestion = {
@@ -25,8 +28,8 @@ export type AnsweredQuestion = {
 };
 export type CategoryConfig = {
   selected: boolean;
-  min: number;
-  max: number;
+  min?: number;
+  max?: number;
 };
 
 export type QuizConfig = Record<QuizCategory, CategoryConfig>;

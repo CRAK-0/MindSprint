@@ -93,6 +93,9 @@ export const QuizSetup = () => {
       min: 1,
       max: 20,
     },
+    percentage: {
+      selected: false,
+    },
   });
 
   const [totalQuestions, setTotalQuestions] = useState(10);
@@ -453,8 +456,19 @@ export const QuizSetup = () => {
     </div>
   );
 };
+import { fractionQuestion } from "../generators/fractionQuestion";
 
-import { multiplicationQuestion } from "../generators/multiplicationQuestion";
-console.log("1-digit addition:", multiplicationQuestion(1, 1));
-console.log("2-digit addition:", multiplicationQuestion(1, 100));
-console.log("3-digit addition:", multiplicationQuestion(1, 1000));
+console.log(fractionQuestion("master"));
+console.log(fractionQuestion("master"));
+console.log(fractionQuestion("master"));
+console.log(fractionQuestion("master"));
+console.log(fractionQuestion("master"));
+console.log(fractionQuestion("master"));
+console.log(fractionQuestion("master"));
+console.log(fractionQuestion("master"));
+console.log(fractionQuestion("master"));
+console.log(fractionQuestion("master"));
+console.log(fractionQuestion("master"));
+console.log(fractionQuestion("master"));
+console.log(fractionQuestion("master"));
+console.log(fractionQuestion("master"));
