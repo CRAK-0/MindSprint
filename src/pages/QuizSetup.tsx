@@ -43,6 +43,41 @@ const categories: {
     title: "Cube Roots",
     description: "Practice cube root calculations",
   },
+  {
+    key: "percentage",
+    title: "Percentage",
+    description: "Practice percentage calculations",
+  },
+  {
+    key: "ratio",
+    title: "Ratio",
+    description: "Practice ratio calculations",
+  },
+  {
+    key: "fraction",
+    title: "Fractions",
+    description: "Practice fraction calculations",
+  },
+  {
+    key: "simplification",
+    title: "Simplification",
+    description: "Practice BODMAS and mixed calculations",
+  },
+  {
+    key: "addition",
+    title: "Addition",
+    description: "Practice addition calculations",
+  },
+  {
+    key: "subtraction",
+    title: "Subtraction",
+    description: "Practice subtraction calculations",
+  },
+  {
+    key: "multiplication",
+    title: "Multiplication",
+    description: "Practice multiplication calculations",
+  },
 ];
 
 export const QuizSetup = () => {
@@ -95,6 +130,18 @@ export const QuizSetup = () => {
     },
     percentage: {
       selected: false,
+      difficulty: "beginner",
+    },
+    fraction: {
+      selected: false,
+      difficulty: "beginner",
+    },
+    ratio: {
+      selected: false,
+    },
+    simplification: {
+      selected: false,
+      difficulty: "beginner",
     },
   });
 
@@ -106,7 +153,11 @@ export const QuizSetup = () => {
     const savedConfig = getQuizSetup();
 
     if (savedConfig !== null) {
-      setConfig(savedConfig.config);
+      setConfig((currentConfig) => ({
+        ...currentConfig,
+        ...savedConfig.config,
+      }));
+
       setTotalQuestions(savedConfig.totalQuestions);
     }
   }, []);
@@ -126,22 +177,24 @@ export const QuizSetup = () => {
     }
 
     for (const { key } of categories) {
-      const { min, max } = configData[key];
+      const category = configData[key];
 
-      if (min < 0 || max < 0) {
-        validationErrors.push({
-          category: key,
-          message: "Minimum and maximum must be 0 or greater",
-        });
+      if (!category.selected) continue;
 
-        continue;
-      }
-
-      if (min > max) {
-        validationErrors.push({
-          category: key,
-          message: "Minimum cannot be greater than maximum",
-        });
+      if ("min" in category && "max" in category) {
+        // Validation goes here
+        if (category.min < 0 || category.max < 0) {
+          validationErrors.push({
+            category: key,
+            message: "Minimum and maximum must be 0 or greater",
+          });
+        }
+        if (category.min > category.max) {
+          validationErrors.push({
+            category: key,
+            message: "Minimum cannot be greater than maximum",
+          });
+        }
       }
     }
 
@@ -318,58 +371,98 @@ export const QuizSetup = () => {
                 />
               </div>
 
-              {/* Range */}
-              <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
+              {/* Category Settings */}
+              {"min" in category && "max" in category ? (
+                <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {/* Minimum */}
+                  <div>
+                    <label
+                      className="text-sm"
+                      style={{ color: theme.colors.mutedText }}
+                    >
+                      Minimum
+                    </label>
+
+                    <input
+                      name={`${key}-min`}
+                      type="number"
+                      min={0}
+                      value={category.min}
+                      onChange={handleChange}
+                      className="mt-2 w-full rounded-xl px-4 py-3 outline-none"
+                      style={{
+                        backgroundColor: theme.colors.background,
+                        color: theme.colors.text,
+                        border: `1px solid ${theme.colors.border}`,
+                      }}
+                    />
+                  </div>
+
+                  {/* Maximum */}
+                  <div>
+                    <label
+                      className="text-sm"
+                      style={{ color: theme.colors.mutedText }}
+                    >
+                      Maximum
+                    </label>
+
+                    <input
+                      name={`${key}-max`}
+                      type="number"
+                      min={0}
+                      value={category.max}
+                      onChange={handleChange}
+                      className="mt-2 w-full rounded-xl px-4 py-3 outline-none"
+                      style={{
+                        backgroundColor: theme.colors.background,
+                        color: theme.colors.text,
+                        border: `1px solid ${theme.colors.border}`,
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : "difficulty" in category ? (
+                <div className="mt-6">
                   <label
+                    htmlFor={`${key}-difficulty`}
                     className="text-sm"
-                    style={{
-                      color: theme.colors.mutedText,
-                    }}
+                    style={{ color: theme.colors.mutedText }}
                   >
-                    Minimum
+                    Difficulty
                   </label>
 
-                  <input
-                    name={`${key}-min`}
-                    type="number"
-                    min={0}
-                    value={category.min}
-                    onChange={handleChange}
+                  <select
+                    id={`${key}-difficulty`}
+                    value={category.difficulty}
+                    onChange={(e) => {
+                      const updatedConfig = {
+                        ...config,
+                        [key]: {
+                          ...config[key],
+                          difficulty: e.target.value as
+                            | "beginner"
+                            | "intermediate"
+                            | "master",
+                        },
+                      };
+
+                      setConfig(updatedConfig);
+                      validateQuizConfig(updatedConfig, totalQuestions);
+                    }}
                     className="mt-2 w-full rounded-xl px-4 py-3 outline-none"
                     style={{
                       backgroundColor: theme.colors.background,
                       color: theme.colors.text,
                       border: `1px solid ${theme.colors.border}`,
                     }}
-                  />
-                </div>
-
-                <div>
-                  <label
-                    className="text-sm"
-                    style={{
-                      color: theme.colors.mutedText,
-                    }}
                   >
-                    Maximum
-                  </label>
-
-                  <input
-                    name={`${key}-max`}
-                    type="number"
-                    min={0}
-                    value={category.max}
-                    onChange={handleChange}
-                    className="mt-2 w-full rounded-xl px-4 py-3 outline-none"
-                    style={{
-                      backgroundColor: theme.colors.background,
-                      color: theme.colors.text,
-                      border: `1px solid ${theme.colors.border}`,
-                    }}
-                  />
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="master">Master</option>
+                  </select>
                 </div>
-              </div>
+              ) : null}
 
               {error && (
                 <div

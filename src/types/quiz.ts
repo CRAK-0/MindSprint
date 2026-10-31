@@ -12,12 +12,14 @@ export type QuizCategory =
   | "ratio"
   | "simplification";
 
+export type Difficulty = "beginner" | "intermediate" | "master";
+
 export type Question = {
   question: string;
   correctAnswer: number | string;
   options: (number | string)[];
   category: string;
-  difficulty?: "beginner" | "intermediate" | "master";
+  difficulty?: Difficulty;
 };
 
 export type AnsweredQuestion = {
@@ -28,13 +30,42 @@ export type AnsweredQuestion = {
   timeTaken: number;
   isCorrect: boolean;
 };
-export type CategoryConfig = {
+
+// Categories that use minimum and maximum values
+export type RangeCategoryConfig = {
   selected: boolean;
-  min?: number;
-  max?: number;
+  min: number;
+  max: number;
 };
 
-export type QuizConfig = Record<QuizCategory, CategoryConfig>;
+// Categories that use a difficulty selector
+export type DifficultyCategoryConfig = {
+  selected: boolean;
+  difficulty: Difficulty;
+};
+
+// Categories that need no additional settings
+export type BasicCategoryConfig = {
+  selected: boolean;
+};
+
+export type QuizConfig = {
+  tables: RangeCategoryConfig;
+  squares: RangeCategoryConfig;
+  cubes: RangeCategoryConfig;
+  squareRoots: RangeCategoryConfig;
+  cubeRoots: RangeCategoryConfig;
+
+  addition: RangeCategoryConfig;
+  subtraction: RangeCategoryConfig;
+  multiplication: RangeCategoryConfig;
+
+  simplification: DifficultyCategoryConfig;
+
+  percentage: DifficultyCategoryConfig;
+  fraction: DifficultyCategoryConfig;
+  ratio: BasicCategoryConfig;
+};
 
 export type QuizSession = {
   totalQuestions: number;
@@ -49,7 +80,6 @@ export type QuizSession = {
 };
 
 export type QuizResult = {
-  // your fields here
   correctAnswers: number;
   wrongAnswers: number;
   accuracy: number;

@@ -2,9 +2,9 @@ import type { Question } from "../types/quiz";
 import { createOptions } from "../utils/options";
 import { randomInteger } from "../utils/random";
 
-type PercentageLevel = "beginner" | "intermediate" | "master";
+type FractionLevel = "beginner" | "intermediate" | "master";
 
-export const fractionQuestion = (level: PercentageLevel) => {
+export const fractionQuestion = (level: FractionLevel) => {
   switch (level) {
     case "beginner":
       return beginnerLevel();
