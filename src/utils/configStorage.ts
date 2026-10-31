@@ -11,12 +11,16 @@ const defaultConfig: QuizConfig = {
   squareRoots: { selected: false, min: 1, max: 20 },
   cubes: { selected: false, min: 1, max: 10 },
   cubeRoots: { selected: false, min: 1, max: 10 },
-  addition: { selected: false, min: 1, max: 100 },
-  subtraction: { selected: false, min: 1, max: 100 },
+
+  addition: { selected: false, digits: 2 },
+  subtraction: { selected: false, digits: 2 },
+
   multiplication: { selected: false, min: 1, max: 100 },
+
   percentage: { selected: false, difficulty: "beginner" },
   fraction: { selected: false, difficulty: "beginner" },
   simplification: { selected: false, difficulty: "beginner" },
+
   ratio: { selected: false },
 };
 
@@ -25,6 +29,7 @@ export const saveQuizSetup = (config: QuizConfig, totalQuestions: number) => {
     config: config,
     totalQuestions: totalQuestions,
   });
+
   localStorage.setItem("quizSetup", data);
 };
 
@@ -45,7 +50,7 @@ export const getQuizSetup = (): GetSetup | null => {
   if (savedConfig == null) {
     return null;
   }
-  //Check that the data is valid
+
   try {
     const parsedData = JSON.parse(savedConfig);
 
@@ -83,6 +88,7 @@ export const getQuizSetup = (): GetSetup | null => {
         defaultConfig.subtraction,
         parsedData.config.subtraction,
       ),
+
       multiplication: mergeCategory(
         defaultConfig.multiplication,
         parsedData.config.multiplication,

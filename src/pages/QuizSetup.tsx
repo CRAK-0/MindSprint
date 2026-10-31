@@ -28,11 +28,7 @@ const categories: {
     title: "Squares",
     description: "Practice square calculations",
   },
-  {
-    key: "cubes",
-    title: "Cubes",
-    description: "Practice cube calculations",
-  },
+  { key: "cubes", title: "Cubes", description: "Practice cube calculations" },
   {
     key: "squareRoots",
     title: "Square Roots",
@@ -48,11 +44,7 @@ const categories: {
     title: "Percentage",
     description: "Practice percentage calculations",
   },
-  {
-    key: "ratio",
-    title: "Ratio",
-    description: "Practice ratio calculations",
-  },
+  { key: "ratio", title: "Ratio", description: "Practice ratio calculations" },
   {
     key: "fraction",
     title: "Fractions",
@@ -85,68 +77,21 @@ export const QuizSetup = () => {
   const navigate = useNavigate();
 
   const [config, setConfig] = useState<QuizConfig>({
-    tables: {
-      selected: false,
-      min: 1,
-      max: 10,
-    },
-
-    squares: {
-      selected: false,
-      min: 1,
-      max: 100,
-    },
-
-    cubes: {
-      selected: false,
-      min: 1,
-      max: 20,
-    },
-
-    squareRoots: {
-      selected: false,
-      min: 1,
-      max: 100,
-    },
-    addition: {
-      selected: false,
-      min: 1,
-      max: 10,
-    },
-    subtraction: {
-      selected: false,
-      min: 1,
-      max: 10,
-    },
-    multiplication: {
-      selected: false,
-      min: 1,
-      max: 10,
-    },
-    cubeRoots: {
-      selected: false,
-      min: 1,
-      max: 20,
-    },
-    percentage: {
-      selected: false,
-      difficulty: "beginner",
-    },
-    fraction: {
-      selected: false,
-      difficulty: "beginner",
-    },
-    ratio: {
-      selected: false,
-    },
-    simplification: {
-      selected: false,
-      difficulty: "beginner",
-    },
+    tables: { selected: false, min: 1, max: 10 },
+    squares: { selected: false, min: 1, max: 100 },
+    cubes: { selected: false, min: 1, max: 20 },
+    squareRoots: { selected: false, min: 1, max: 100 },
+    addition: { selected: false, digits: 2 },
+    subtraction: { selected: false, digits: 2 },
+    multiplication: { selected: false, min: 1, max: 10 },
+    cubeRoots: { selected: false, min: 1, max: 20 },
+    percentage: { selected: false, difficulty: "beginner" },
+    fraction: { selected: false, difficulty: "beginner" },
+    ratio: { selected: false },
+    simplification: { selected: false, difficulty: "beginner" },
   });
 
   const [totalQuestions, setTotalQuestions] = useState(10);
-
   const [errors, setErrors] = useState<ValidationError[]>([]);
 
   useEffect(() => {
@@ -182,17 +127,26 @@ export const QuizSetup = () => {
       if (!category.selected) continue;
 
       if ("min" in category && "max" in category) {
-        // Validation goes here
         if (category.min < 0 || category.max < 0) {
           validationErrors.push({
             category: key,
             message: "Minimum and maximum must be 0 or greater",
           });
         }
+
         if (category.min > category.max) {
           validationErrors.push({
             category: key,
             message: "Minimum cannot be greater than maximum",
+          });
+        }
+      }
+
+      if ("digits" in category) {
+        if (!Number.isInteger(category.digits) || category.digits < 1) {
+          validationErrors.push({
+            category: key,
+            message: "Digits must be a positive integer",
           });
         }
       }
@@ -206,14 +160,13 @@ export const QuizSetup = () => {
     }
 
     setErrors(validationErrors);
-
     return validationErrors;
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const [category, field] = e.target.name.split("-") as [
       QuizCategory,
-      "selected" | "min" | "max",
+      "selected" | "min" | "max" | "digits",
     ];
 
     if (field === "selected") {
@@ -226,9 +179,7 @@ export const QuizSetup = () => {
       };
 
       setConfig(updatedConfig);
-
       validateQuizConfig(updatedConfig, totalQuestions);
-
       return;
     }
 
@@ -243,21 +194,17 @@ export const QuizSetup = () => {
     };
 
     setConfig(updatedConfig);
-
     validateQuizConfig(updatedConfig, totalQuestions);
   };
 
   const handleQuestionsChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = Number(e.target.value);
-
     setTotalQuestions(newValue);
-
     validateQuizConfig(config, newValue);
   };
 
-  const getCategoryError = (category: QuizCategory) => {
-    return errors.find((error) => error.category === category);
-  };
+  const getCategoryError = (category: QuizCategory) =>
+    errors.find((error) => error.category === category);
 
   const categorySelectionError = errors.find(
     (error) => error.category === "categories",
@@ -270,45 +217,30 @@ export const QuizSetup = () => {
   const handleSubmit = () => {
     const validationErrors = validateQuizConfig(config, totalQuestions);
 
-    if (validationErrors.length > 0) {
-      return;
-    }
+    if (validationErrors.length > 0) return;
 
     saveQuizSetup(config, totalQuestions);
 
     navigate("/quiz", {
-      state: {
-        config,
-        totalQuestions,
-      },
+      state: { config, totalQuestions },
     });
   };
 
   return (
     <div className="mx-auto w-full max-w-3xl">
-      {/* Page heading */}
       <section className="mb-10">
         <h1
           className="text-4xl font-bold tracking-tight"
-          style={{
-            color: theme.colors.text,
-          }}
+          style={{ color: theme.colors.text }}
         >
           Set Up Your Quiz
         </h1>
-
-        <p
-          className="mt-2"
-          style={{
-            color: theme.colors.mutedText,
-          }}
-        >
+        <p className="mt-2" style={{ color: theme.colors.mutedText }}>
           Choose what you want to practice.
         </p>
       </section>
 
       <div className="space-y-5">
-        {/* Category selection error */}
         {categorySelectionError && (
           <div
             className="rounded-xl px-4 py-3 text-sm"
@@ -322,10 +254,8 @@ export const QuizSetup = () => {
           </div>
         )}
 
-        {/* Categories */}
         {categories.map(({ key, title, description }) => {
           const category = config[key];
-
           const error = getCategoryError(key);
 
           return (
@@ -337,23 +267,17 @@ export const QuizSetup = () => {
                 border: `1px solid ${theme.colors.border}`,
               }}
             >
-              {/* Category header */}
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <h2
                     className="text-lg font-semibold"
-                    style={{
-                      color: theme.colors.text,
-                    }}
+                    style={{ color: theme.colors.text }}
                   >
                     {title}
                   </h2>
-
                   <p
                     className="mt-1 text-sm"
-                    style={{
-                      color: theme.colors.mutedText,
-                    }}
+                    style={{ color: theme.colors.mutedText }}
                   >
                     {description}
                   </p>
@@ -365,16 +289,36 @@ export const QuizSetup = () => {
                   checked={category.selected}
                   onChange={handleChange}
                   className="h-5 w-5 cursor-pointer"
-                  style={{
-                    accentColor: theme.colors.primary,
-                  }}
+                  style={{ accentColor: theme.colors.primary }}
                 />
               </div>
 
-              {/* Category Settings */}
-              {"min" in category && "max" in category ? (
+              {"digits" in category ? (
+                <div className="mt-6">
+                  <label
+                    htmlFor={`${key}-digits`}
+                    className="text-sm"
+                    style={{ color: theme.colors.mutedText }}
+                  >
+                    Number of digits
+                  </label>
+                  <input
+                    id={`${key}-digits`}
+                    name={`${key}-digits`}
+                    type="number"
+                    min={1}
+                    value={category.digits}
+                    onChange={handleChange}
+                    className="mt-2 w-full rounded-xl px-4 py-3 outline-none"
+                    style={{
+                      backgroundColor: theme.colors.background,
+                      color: theme.colors.text,
+                      border: `1px solid ${theme.colors.border}`,
+                    }}
+                  />
+                </div>
+              ) : "min" in category && "max" in category ? (
                 <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {/* Minimum */}
                   <div>
                     <label
                       className="text-sm"
@@ -382,7 +326,6 @@ export const QuizSetup = () => {
                     >
                       Minimum
                     </label>
-
                     <input
                       name={`${key}-min`}
                       type="number"
@@ -398,7 +341,6 @@ export const QuizSetup = () => {
                     />
                   </div>
 
-                  {/* Maximum */}
                   <div>
                     <label
                       className="text-sm"
@@ -406,7 +348,6 @@ export const QuizSetup = () => {
                     >
                       Maximum
                     </label>
-
                     <input
                       name={`${key}-max`}
                       type="number"
@@ -431,7 +372,6 @@ export const QuizSetup = () => {
                   >
                     Difficulty
                   </label>
-
                   <select
                     id={`${key}-difficulty`}
                     value={category.difficulty}
@@ -480,7 +420,6 @@ export const QuizSetup = () => {
           );
         })}
 
-        {/* Question count */}
         <section
           className="rounded-2xl p-6"
           style={{
@@ -490,19 +429,11 @@ export const QuizSetup = () => {
         >
           <h2
             className="text-lg font-semibold"
-            style={{
-              color: theme.colors.text,
-            }}
+            style={{ color: theme.colors.text }}
           >
             Number of Questions
           </h2>
-
-          <p
-            className="mt-1 text-sm"
-            style={{
-              color: theme.colors.mutedText,
-            }}
-          >
+          <p className="mt-1 text-sm" style={{ color: theme.colors.mutedText }}>
             How many questions do you want in this quiz?
           </p>
 
@@ -533,7 +464,6 @@ export const QuizSetup = () => {
           )}
         </section>
 
-        {/* Start button */}
         <button
           disabled={errors.length > 0}
           onClick={handleSubmit}

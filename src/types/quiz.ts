@@ -38,6 +38,12 @@ export type RangeCategoryConfig = {
   max: number;
 };
 
+// Categories that use a digit count
+export type DigitCategoryConfig = {
+  selected: boolean;
+  digits: number;
+};
+
 // Categories that use a difficulty selector
 export type DifficultyCategoryConfig = {
   selected: boolean;
@@ -56,14 +62,14 @@ export type QuizConfig = {
   squareRoots: RangeCategoryConfig;
   cubeRoots: RangeCategoryConfig;
 
-  addition: RangeCategoryConfig;
-  subtraction: RangeCategoryConfig;
+  addition: DigitCategoryConfig;
+  subtraction: DigitCategoryConfig;
   multiplication: RangeCategoryConfig;
 
   simplification: DifficultyCategoryConfig;
-
   percentage: DifficultyCategoryConfig;
   fraction: DifficultyCategoryConfig;
+
   ratio: BasicCategoryConfig;
 };
 

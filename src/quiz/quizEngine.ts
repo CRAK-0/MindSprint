@@ -20,9 +20,12 @@ const rangeGenerators = {
   cubes: cubeQuestion,
   squareRoots: squareRootQuestion,
   cubeRoots: cubeRootQuestion,
+  multiplication: multiplicationQuestion,
+};
+
+const digitGenerators = {
   addition: additionQuestion,
   subtraction: subtractionQuestion,
-  multiplication: multiplicationQuestion,
 };
 
 const difficultyGenerators = {
@@ -54,6 +57,12 @@ export const quizEngine = (quizConfig: QuizConfig): Question => {
   if ("difficulty" in categoryConfig) {
     return difficultyGenerators[category as keyof typeof difficultyGenerators](
       categoryConfig.difficulty,
+    );
+  }
+
+  if ("digits" in categoryConfig) {
+    return digitGenerators[category as keyof typeof digitGenerators](
+      categoryConfig.digits,
     );
   }
 

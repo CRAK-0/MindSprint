@@ -9,9 +9,7 @@ export const calculateScore = (session: QuizSession): QuizResult => {
 
   // Calculate wrong answers from questions actually answered
   const wrongAnswers = answeredCount - correctAnswers;
-  const accuracy = Number(
-    ((correctAnswers / session.totalQuestions) * 100).toFixed(2),
-  );
+  const accuracy = Number(((correctAnswers / answeredCount) * 100).toFixed(2));
   const firstQuestionTime = session.answeredQuestions[0].timeTaken;
   const totalAnswerTime = session.answeredQuestions.reduce(
     (total, question) => {
