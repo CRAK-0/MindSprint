@@ -7,23 +7,26 @@ import { QuizSetup } from "./pages/QuizSetup";
 
 import AppLayout from "./layout/AppLayout";
 import { ThemeProvider } from "./theme/ThemeProvider";
+// import SkullScene from "./components/SkullScene";
+import Landing from "./pages/Landing";
 
 function App() {
-    return (
-        <ThemeProvider>
-            <Routes>
-                {/* Normal pages */}
-                <Route element={<AppLayout />}>
-                    <Route path="/" element={<QuizSetup />} />
-                    <Route path="/quiz-details" element={<QuizDetails />} />
-                    <Route path="/history" element={<History />} />
-                </Route>
+  return (
+    <ThemeProvider>
+      <Routes>
+        {/* Normal pages */}
+        <Route element={<AppLayout />}>
+          <Route path="/quiz-setup" element={<QuizSetup />} />
+          <Route path="/quiz-details" element={<QuizDetails />} />
+          <Route path="/history" element={<History />} />
+        </Route>
 
-                {/* Distraction-free quiz */}
-                <Route path="/quiz" element={<Quiz />} />
-            </Routes>
-        </ThemeProvider>
-    );
+        {/* Distraction-free quiz */}
+        <Route path="/quiz" element={<Quiz />} />
+        <Route path="/" element={<Landing />} />
+      </Routes>
+    </ThemeProvider>
+  );
 }
 
 export default App;
