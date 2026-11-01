@@ -145,7 +145,7 @@ const Landing = () => {
         {/* Navbar */}
         <nav
           ref={navbarRef}
-          className="pointer-events-auto flex items-center justify-between px-6 py-6 opacity-0 md:px-12"
+          className="pointer-events-auto relative z-[100] flex items-center justify-between px-6 py-6 opacity-0 md:px-12"
         >
           <h1 className="text-xl font-bold tracking-[0.18em] text-[var(--color-primary)] md:text-2xl">
             MATH SPRINT<span className="text-[var(--color-text)]">.</span>
@@ -194,7 +194,7 @@ const Landing = () => {
 
               {/* Theme dropdown */}
               {themeOpen && (
-                <div className="absolute right-0 top-14 z-50 w-64 overflow-hidden rounded-2xl border border-white/10 bg-[#151515]/95 p-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
+                <div className="absolute right-0 top-14 z-[100] w-64 overflow-hidden rounded-2xl border border-white/10 bg-[#151515]/95 p-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
                   <div className="mb-3 flex items-center justify-between px-2">
                     <div>
                       <p className="text-[10px] font-semibold tracking-[0.2em] text-white/40">
