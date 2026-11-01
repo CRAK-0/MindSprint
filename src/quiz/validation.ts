@@ -1,23 +1,37 @@
 import type { QuizCategory, QuizConfig } from "../types/quiz";
 import { throwError } from "../utils/errors";
 
-export const validateQuizConfig = (quizConfig: QuizConfig,totalQuestions:number) => {
-    const categories = Object.keys(quizConfig) as QuizCategory[];
-    const selectedCategories = categories.filter((category) => {
-        return quizConfig[category].selected === true;
-    })
-    if (selectedCategories.length === 0) {
-    // no category selected
-    throwError("At least one category must be selected.")
+export const validateQuizConfig = (
+  quizConfig: QuizConfig,
+  totalQuestions: number,
+) => {
+  const categories = Object.keys(quizConfig) as QuizCategory[];
+
+  const selectedCategories = categories.filter(
+    (category) => quizConfig[category].selected,
+  );
+
+  if (selectedCategories.length === 0) {
+    throwError("At least one category must be selected.");
+  }
+
+  selectedCategories.forEach((category) => {
+    const config = quizConfig[category];
+
+    // Categories with minimum and maximum values
+    if ("min" in config && config.min > config.max) {
+      throwError("Minimum cannot be greater than maximum.");
     }
 
-    selectedCategories.forEach((category) => {
-        if(quizConfig[category].min > quizConfig[category].max){
-            throwError("Minimum cannot be greater than maximum.");
-        }
-    })
-
-    if(totalQuestions<=0 || !Number.isInteger(totalQuestions)){
-        throwError("Number of Quetion is selected wrong or some Error");
+    // Categories with digit configuration
+    if ("digits" in config) {
+      if (!Number.isInteger(config.digits) || config.digits < 1) {
+        throwError("Digit count must be a positive integer.");
+      }
     }
-}
+  });
+
+  if (totalQuestions <= 0 || !Number.isInteger(totalQuestions)) {
+    throwError("Number of questions is invalid.");
+  }
+};

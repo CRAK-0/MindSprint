@@ -12,21 +12,23 @@ export type QuizCategory =
   | "ratio"
   | "simplification";
 
+export type AnswerValue = number | string;
+
 export type Difficulty = "beginner" | "intermediate" | "master";
 
 export type Question = {
   question: string;
-  correctAnswer: number | string;
-  options: (number | string)[];
-  category: string;
+  correctAnswer: AnswerValue;
+  options: AnswerValue[];
+  category: QuizCategory;
   difficulty?: Difficulty;
 };
 
 export type AnsweredQuestion = {
   question: string;
-  correctAnswer: number;
+  correctAnswer: AnswerValue;
   category: QuizCategory;
-  userAnswer: number;
+  userAnswer: AnswerValue;
   timeTaken: number;
   isCorrect: boolean;
 };

@@ -1,5 +1,10 @@
 import { useState } from "react";
-import type { QuizConfig, QuizResult, QuizSession } from "../types/quiz";
+import type {
+  AnswerValue,
+  QuizConfig,
+  QuizResult,
+  QuizSession,
+} from "../types/quiz";
 import {
   createQuizSession,
   nextQuestion,
@@ -13,7 +18,9 @@ export const useQuiz = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [result, setResult] = useState<QuizResult | null>(null);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<AnswerValue | null>(
+    null,
+  );
 
   const startQuiz = (quizConfig: QuizConfig, totalQuestions: number) => {
     setResult(null);
@@ -26,7 +33,7 @@ export const useQuiz = () => {
     setIsFinished(false);
   };
 
-  const submit = (userAnswer: number) => {
+  const submit = (userAnswer: AnswerValue) => {
     const currentSession = session;
 
     if (currentSession === null) {

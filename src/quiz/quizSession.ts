@@ -1,4 +1,9 @@
-import type { QuizSession, QuizConfig, AnsweredQuestion } from "../types/quiz";
+import type {
+  QuizSession,
+  QuizConfig,
+  AnsweredQuestion,
+  AnswerValue,
+} from "../types/quiz";
 import { getQuestionKey } from "../utils/questionKey";
 import { getElapsedTime, startTimer } from "../utils/timer";
 import { quizEngine } from "./quizEngine";
@@ -31,7 +36,7 @@ export const createQuizSession = (
 
 export const submitAnswer = (
   session: QuizSession,
-  userAnswer: number,
+  userAnswer: AnswerValue,
 ): QuizSession => {
   const isCorrect = session.currentQuestion.correctAnswer === userAnswer;
 

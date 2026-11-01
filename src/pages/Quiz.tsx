@@ -54,7 +54,7 @@ export const Quiz = () => {
     startQuiz(state.config, state.totalQuestions);
   }, []);
 
-  const handleOptionClick = (option: number) => {
+  const handleOptionClick = (option: string | number) => {
     submit(option);
   };
 
@@ -367,7 +367,7 @@ export const Quiz = () => {
           Solve the following
         </p>
 
-        <h1 className="mt-6 break-words text-5xl font-bold tracking-tight sm:text-7xl lg:text-8xl">
+        <h1 className="mt-6 break-words text-5xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
           {currentQuestion.question}
         </h1>
       </section>

@@ -118,8 +118,6 @@ export const QuizSetup = () => {
     ({ key }) => config[key].selected,
   ).length;
 
-  const hasSelectedCategory = selectedCount > 0;
-
   useEffect(() => {
     const savedConfig = getQuizSetup();
 
