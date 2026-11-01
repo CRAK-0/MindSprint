@@ -11,24 +11,32 @@ type ThemeContextType = {
 export const ThemeContext = createContext<ThemeContextType | undefined>(
   undefined,
 );
+
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [activeTheme, setActiveTheme] = useState(() => {
-    // read something from localStorage
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme && themes[savedTheme]) {
-      // return savedTheme
-      return savedTheme;
-    }
+    const savedTheme = localStorage.getItem("math-sprint-theme");
 
-    // otherwise
-    return "midnight";
+    return savedTheme && themes[savedTheme] ? savedTheme : "amber";
   });
+
   const theme = themes[activeTheme];
 
   useEffect(() => {
-    // save activeTheme
-    localStorage.setItem("theme", activeTheme);
-  }, [activeTheme]);
+    const root = document.documentElement;
+
+    Object.entries(theme.colors).forEach(([key, value]) => {
+      const cssKey = key.replace(
+        /[A-Z]/g,
+        (letter) => `-${letter.toLowerCase()}`,
+      );
+
+      root.style.setProperty(`--color-${cssKey}`, value);
+    });
+
+    root.style.colorScheme = activeTheme === "paper" ? "light" : "dark";
+
+    localStorage.setItem("math-sprint-theme", activeTheme);
+  }, [activeTheme, theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, activeTheme, setActiveTheme }}>

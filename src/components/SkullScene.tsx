@@ -2,7 +2,9 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
 import Skull from "../models/skull_salazar.glb";
+import { useTheme } from "../theme/useTheme";
 
 interface SkullSceneProps {
   onProgress: (progress: number) => void;
@@ -13,8 +15,23 @@ interface SkullSceneProps {
 const SkullScene = ({ onProgress, onLoaded, onError }: SkullSceneProps) => {
   const mountRef = useRef<HTMLDivElement>(null);
 
+  const ringMaterialRef = useRef<THREE.MeshBasicMaterial | null>(null);
+  const ringLightRef = useRef<THREE.PointLight | null>(null);
+  const targetLightColorRef = useRef<THREE.Color | null>(null);
+
+  const { theme } = useTheme();
+
+  // Update theme colors without recreating the Three.js scene
+  useEffect(() => {
+    const newColor = new THREE.Color(theme.colors.primary);
+
+    targetLightColorRef.current = newColor;
+  }, [theme.colors.primary]);
+
+  // Create and manage the Three.js scene
   useEffect(() => {
     const container = mountRef.current;
+
     if (!container) return;
 
     // Scene
@@ -47,24 +64,30 @@ const SkullScene = ({ onProgress, onLoaded, onError }: SkullSceneProps) => {
 
     container.appendChild(renderer.domElement);
 
-    // Lights
+    // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
     scene.add(ambientLight);
 
     const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
     directionalLight.position.set(5, 8, 8);
     directionalLight.castShadow = true;
+
     scene.add(directionalLight);
 
     // Rotating group
     const skullGroup = new THREE.Group();
     scene.add(skullGroup);
 
+    // Initial theme color
+    const initialColor = new THREE.Color(theme.colors.primary);
+
+    targetLightColorRef.current = initialColor.clone();
+
     // Ring
     const ringGeometry = new THREE.TorusGeometry(1.5, 0.035, 16, 100);
 
     const ringMaterial = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
+      color: initialColor,
     });
 
     const ring = new THREE.Mesh(ringGeometry, ringMaterial);
@@ -72,11 +95,16 @@ const SkullScene = ({ onProgress, onLoaded, onError }: SkullSceneProps) => {
     ring.rotation.x = Math.PI / 2.8;
     ring.position.set(0, 1.3, -1.3);
 
+    ringMaterialRef.current = ringMaterial;
+
     skullGroup.add(ring);
 
     // Ring light
-    const ringLight = new THREE.PointLight(0xffc766, 100, 30);
+    const ringLight = new THREE.PointLight(initialColor, 100, 30);
+
     ringLight.position.set(0, 1.3, -1.3);
+
+    ringLightRef.current = ringLight;
 
     skullGroup.add(ringLight);
 
@@ -99,7 +127,7 @@ const SkullScene = ({ onProgress, onLoaded, onError }: SkullSceneProps) => {
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.5;
 
-    // Model loader
+    // Load skull model
     const loader = new GLTFLoader();
 
     let model: THREE.Group | null = null;
@@ -120,6 +148,7 @@ const SkullScene = ({ onProgress, onLoaded, onError }: SkullSceneProps) => {
       (progress) => {
         if (progress.total > 0) {
           const percent = (progress.loaded / progress.total) * 100;
+
           onProgress(Math.min(percent, 99));
         }
       },
@@ -147,14 +176,27 @@ const SkullScene = ({ onProgress, onLoaded, onError }: SkullSceneProps) => {
 
     // Animation loop
     const clock = new THREE.Clock();
+
     let animationId = 0;
 
     const tick = () => {
       const delta = clock.getDelta();
 
+      // Rotate skull
       skullGroup.rotation.y += delta * 0.3;
 
+      // Smoothly transition theme colors
+      const targetColor = targetLightColorRef.current;
+
+      if (targetColor) {
+        const transitionSpeed = 1 - Math.exp(-delta * 5);
+
+        ringMaterial.color.lerp(targetColor, transitionSpeed);
+        ringLight.color.lerp(targetColor, transitionSpeed);
+      }
+
       controls.update();
+
       renderer.render(scene, camera);
 
       animationId = requestAnimationFrame(tick);
@@ -165,6 +207,7 @@ const SkullScene = ({ onProgress, onLoaded, onError }: SkullSceneProps) => {
     // Cleanup
     return () => {
       cancelAnimationFrame(animationId);
+
       window.removeEventListener("resize", handleResize);
 
       controls.dispose();
@@ -185,6 +228,10 @@ const SkullScene = ({ onProgress, onLoaded, onError }: SkullSceneProps) => {
 
       ringGeometry.dispose();
       ringMaterial.dispose();
+
+      ringMaterialRef.current = null;
+      ringLightRef.current = null;
+      targetLightColorRef.current = null;
 
       renderer.dispose();
       renderer.domElement.remove();

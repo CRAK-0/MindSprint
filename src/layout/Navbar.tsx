@@ -3,73 +3,73 @@ import { useTheme } from "../theme/useTheme";
 import ThemeButton from "../components/ThemeButton";
 
 type NavbarProps = {
-    onThemeClick: () => void;
+  onThemeClick: () => void;
 };
 
 const Navbar = ({ onThemeClick }: NavbarProps) => {
-    const { theme } = useTheme();
+  const { theme } = useTheme();
+  const { colors } = theme;
 
-    const getNavClass = ({
-        isActive,
-    }: {
-        isActive: boolean;
-    }) =>
-        `rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
-            isActive
-                ? "opacity-100"
-                : "opacity-60 hover:opacity-100"
-        }`;
+  const getNavClass = ({ isActive }: { isActive: boolean }) =>
+    `rounded-xl px-3 py-2 text-sm font-semibold transition-all duration-200 ${
+      isActive ? "opacity-100" : "opacity-65 hover:opacity-100"
+    }`;
 
-    return (
-        <header
-            style={{
-                backgroundColor: theme.colors.surface,
-            }}
-            className="mx-auto w-screen  rounded-2xl px-4 py-3"
+  const getNavStyle = ({ isActive }: { isActive: boolean }) => ({
+    color: isActive ? colors.primary : colors.text,
+    backgroundColor: isActive ? `${colors.primary}18` : "transparent",
+  });
+
+  return (
+    <header
+      className="mx-auto w-full rounded-2xl border px-4 py-3 sm:px-5"
+      style={{
+        backgroundColor: colors.surface,
+        borderColor: colors.border,
+      }}
+    >
+      <div className="flex items-center justify-between gap-3">
+        {/* Brand */}
+        <NavLink
+          to="/"
+          className="flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight sm:text-xl"
+          style={{ color: colors.text }}
         >
-            <div className="flex items-center justify-between">
-                <NavLink
-                    to="/"
-                    style={{
-                        color: theme.colors.text,
-                    }}
-                    className="text-lg font-bold"
-                >
-                    MindSprint
-                </NavLink>
+          <span
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-black"
+            style={{
+              backgroundColor: colors.primary,
+              color: colors.background,
+            }}
+          >
+            M
+          </span>
 
-                <nav className="flex items-center gap-1">
-                    <NavLink
-                        to="/"
-                        className={getNavClass}
-                        style={({ isActive }) => ({
-                            color: isActive
-                                ? theme.colors.primary
-                                : theme.colors.text,
-                        })}
-                    >
-                        Quiz
-                    </NavLink>
+          <span>
+            Mind<span style={{ color: colors.primary }}>Sprint</span>
+          </span>
+        </NavLink>
 
-                    <NavLink
-                        to="/history"
-                        className={getNavClass}
-                        style={({ isActive }) => ({
-                            color: isActive
-                                ? theme.colors.primary
-                                : theme.colors.text,
-                        })}
-                    >
-                        History
-                    </NavLink>
+        {/* Navigation */}
+        <nav className="flex items-center gap-1 sm:gap-2">
+          <NavLink to="/" end className={getNavClass} style={getNavStyle}>
+            Quiz
+          </NavLink>
 
-                    <ThemeButton
-                        onClick={onThemeClick}
-                    />
-                </nav>
-            </div>
-        </header>
-    );
+          <NavLink to="/history" className={getNavClass} style={getNavStyle}>
+            History
+          </NavLink>
+
+          <div
+            className="ml-1 border-l pl-2 sm:ml-2 sm:pl-3"
+            style={{ borderColor: colors.border }}
+          >
+            <ThemeButton onClick={onThemeClick} />
+          </div>
+        </nav>
+      </div>
+    </header>
+  );
 };
 
 export default Navbar;

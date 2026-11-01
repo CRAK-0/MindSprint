@@ -1,26 +1,27 @@
 export type Theme = {
-    name: string;
+  name: string;
 
-    colors: {
-        background: string;
-        surface: string;
-        surfaceHover: string;
+  colors: {
+    background: string;
 
-        text: string;
-        mutedText: string;
+    surface: string;
+    surfaceHover: string;
+    card: string;
 
-        primary: string;
-        primaryHover: string;
+    text: string;
+    mutedText: string;
+    disabled: string;
 
-        border: string;
+    primary: string;
+    primaryHover: string;
 
-        correct: string;
-        correctBackground: string;
+    border: string;
+    focus: string;
 
-        wrong: string;
-        wrongBackground: string;
+    correct: string;
+    correctBackground: string;
 
-        disabled: string;
-        focus: string;
-    };
+    wrong: string;
+    wrongBackground: string;
+  };
 };
