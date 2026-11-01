@@ -194,7 +194,7 @@ const Landing = () => {
 
               {/* Theme dropdown */}
               {themeOpen && (
-                <div className="absolute right-0 top-14 z-[100] w-64 overflow-hidden rounded-2xl border border-white/10 bg-[#151515]/95 p-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
+                <div className="absolute right-0 top-14 z-50 flex max-h-[75vh] w-64 flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#151515]/95 p-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
                   <div className="mb-3 flex items-center justify-between px-2">
                     <div>
                       <p className="text-[10px] font-semibold tracking-[0.2em] text-white/40">
@@ -224,7 +224,7 @@ const Landing = () => {
                     </button>
                   </div>
 
-                  <div className="space-y-1">
+                  <div className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1 [scrollbar-width:thin] [scrollbar-color:#555_transparent]">
                     {Object.entries(themes).map(([key, item]) => {
                       const selected = activeTheme === key;
 
